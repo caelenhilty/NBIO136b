@@ -1,0 +1,14 @@
+2.1.1(b)
+    4 pA
+    I = G(V-E)
+    I = (-50 mV+70mV)/(5MOhms) = 0.02V/(5*10**9 Ohms)
+      = 0.004 * 10**-9 A = 4 pA
+
+2.1.2(b)
+    Increasing noise causes the firing rate to become non-zero before the calculated applied current threshold.
+    Higher noise causes the f-I curve to be more erratic, but lower values can smoothe the curve.
+    This makes sense because noise allows the neuron to fire at lower applied currents because the noise lets the neuron "jump"
+    into sufficient voltage to reach the firing threshold
+
+    
+    
