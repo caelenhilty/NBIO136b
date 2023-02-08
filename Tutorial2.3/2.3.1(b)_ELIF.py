@@ -32,7 +32,7 @@ def ELIF(Iapp):
     ### forward Euler method ###
     for i in range(1, len(time)):
         G[i] = G[i-1] + dt * Gdot(G[i-1])
-        V[i] = V[i-1] + dt * Vdot(V[i-1], G[i],i)
+        V[i] = V[i-1] + dt * Vdot(V[i-1], G[i-1],i)
         if V[i] > Vth:
             V[i] = Vreset
             G[i] += deltaGSRA

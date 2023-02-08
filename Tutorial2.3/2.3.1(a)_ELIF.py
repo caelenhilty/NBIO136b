@@ -19,7 +19,6 @@ time = np.arange(0,duration+dt, dt)
 Iapps = np.zeros(len(time))
 for i in range(5000, 10000):
     Iapps[i] = 500e-12
-firingRates = np.zeros(len(Iapps))
 
 V = np.ones(len(time)) * leakPot
 G = np.zeros(len(time))
@@ -34,7 +33,7 @@ def Gdot(G):
 ### forward Euler method ###
 for i in range(1, len(time)):
     G[i] = G[i-1] + dt * Gdot(G[i-1])
-    V[i] = V[i-1] + dt * Vdot(V[i-1], G[i],i)
+    V[i] = V[i-1] + dt * Vdot(V[i-1], G[i-1],i)
     if V[i] > Vth:
         V[i] = Vreset
         G[i] += deltaGSRA
