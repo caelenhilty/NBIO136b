@@ -51,8 +51,8 @@ plt.plot(time, V)
 plt.ylabel("Membrane Voltage (V)")
 
 plt.subplot(313)
-plt.plot(time, G)
-plt.ylabel("Spike Rate Adaptation Conductance (F)")
+plt.plot(time, G*10e9)
+plt.ylabel("Spike Rate Adaptation Conductance (nF)")
 plt.xlabel("time (s)")
 
 plt.show()

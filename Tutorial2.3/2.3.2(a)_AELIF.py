@@ -28,8 +28,10 @@ dt = 0.1e-3
 duration = 1.5 #s
 time = np.arange(0,duration+dt, dt)
 Iapps = np.zeros(len(time))
-for i in range(5000, 10000):
-    Iapps[i] = 280e-12
+for i in range(5000, 6000):
+    Iapps[i] = 350e-12
+for i in range(7000, 8000):
+    Iapps[i] = 350e-12
 
 V = np.ones(len(time)) * leakPot
 Isra = np.zeros(len(time))
@@ -46,7 +48,7 @@ for i in range(1, len(time)):
 plt.figure(layout = 'constrained')
 plt.subplot(211)
 plt.title("2.3.2(a) AELIF Current Pulse")
-plt.plot(time, Iapps*10**12)
+plt.plot(time, Isra*10**12)
 plt.ylabel("$I_{app} (pA)$")
 
 plt.subplot(212)
