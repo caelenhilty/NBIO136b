@@ -18,7 +18,7 @@ def HodgkinHuxley(inputdelay):
     pulseAmplitude = 0.22e-9 #A
 
     ### vectors ###
-    dt = 0.1e-3
+    dt = 0.1e-4
     duration = 0.35 #s
     time = np.arange(0,duration+dt, dt)
 
@@ -82,17 +82,21 @@ def HodgkinHuxley(inputdelay):
         # print(f"V: {V[i]:.5f} m: {m[i]:.5f} h: {h[i]:.5f} n: {n[i]:.5f}")
     
     return time, Iapps, V
-time, Iapps, V = HodgkinHuxley(5e-3)
-### plot it ###
-plt.figure(layout = 'constrained')
-plt.subplot(231)
-plt.title("4.1.1(b) Hodgkin-Huxley, $I_{app}$ Pulse = 0.22 nA")
-plt.plot(time, Iapps*1e9)
-plt.ylabel("$I_{app}$ (nA)")
 
-plt.subplot(234)
-plt.plot(time, V)
-plt.xlabel("time (s)")
-plt.ylabel("Membrane Potential (V)")
+plt.figure(layout = 'constrained')
+
+delays = [5e-3, 10e-3, 25e-3]
+for i in range(3):
+    delay = delays[i]
+    time, Iapps, V = HodgkinHuxley(delay)
+    plt.subplot(2,3,(i+1))
+    plt.title("$I_{app}$ Pulse = 0.22 nA, " + f"Pulse Delay = {delay * 10**3} ms")
+    plt.plot(time, Iapps*1e9)
+    plt.ylabel("$I_{app}$ (nA)")
+    plt.subplot(2,3,(i+4))
+    plt.plot(time, V)
+    plt.xlabel("time (s)")
+    plt.ylabel("Membrane Potential (V)")
+
 plt.show()
 plt.close()
