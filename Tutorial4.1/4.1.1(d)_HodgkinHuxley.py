@@ -83,7 +83,7 @@ def HodgkinHuxley(inputdelay):
     
     return time, Iapps, V, m, h, n
 
-plt.figure(layout = 'constrained')
+plt.figure()
 
 time, Iapps, V, m, h, n = HodgkinHuxley(20e-3)
 ### plot it ###
@@ -104,4 +104,3 @@ plt.ylabel("Membrane Potential (V)")
 # plt.legend()
 
 plt.show()
-plt.close()

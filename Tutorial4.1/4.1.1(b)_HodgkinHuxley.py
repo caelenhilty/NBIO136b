@@ -73,7 +73,7 @@ for i in range(1, len(time)):
     # print(f"V: {V[i]:.5f} m: {m[i]:.5f} h: {h[i]:.5f} n: {n[i]:.5f}")
 
 ### plot it ###
-plt.figure(layout = 'constrained')
+plt.figure()
 plt.subplot(211)
 plt.title("4.1.1(b) Hodgkin-Huxley, $I_{app}$ Pulse = 0.22 nA")
 plt.plot(time, Iapps*1e9)
@@ -84,4 +84,3 @@ plt.plot(time, V)
 plt.xlabel("time (s)")
 plt.ylabel("Membrane Potential (V)")
 plt.show()
-plt.close()

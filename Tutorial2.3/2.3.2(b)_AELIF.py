@@ -80,7 +80,7 @@ for Iapp in Iapps:
         averageISIs.append(0)
 
 ### plot it ###
-plt.figure(layout = 'constrained')
+plt.figure()
 plt.plot(Iapps*10**12, firstISIs,"ro" , label = "1/ISI(1)")
 plt.plot(Iapps*10**12, averageISIs, label = "final rate")
 plt.xlabel("$I_{app} (pA)$")
@@ -88,4 +88,3 @@ plt.ylabel("Spike Rate (Hz)")
 plt.title("2.3.2(b) f-I curve")
 plt.legend()
 plt.show()
-plt.close()

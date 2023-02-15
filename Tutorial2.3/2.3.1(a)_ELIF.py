@@ -40,7 +40,7 @@ for i in range(1, len(time)):
 
 
 ### plot it ###
-plt.figure(layout = 'constrained')
+plt.figure()
 plt.subplot(311)
 plt.title("2.3.1(a) ELIF Current Pulse")
 plt.plot(time, Iapps*10**12)
@@ -56,4 +56,3 @@ plt.ylabel("Spike Rate Adaptation Conductance (nF)")
 plt.xlabel("time (s)")
 
 plt.show()
-plt.close()

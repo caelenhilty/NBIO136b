@@ -45,7 +45,7 @@ for i in range(1, len(time)):
         V[i] = Vreset
         Isra[i] += b
 
-plt.figure(layout = 'constrained')
+plt.figure()
 plt.subplot(211)
 plt.title("2.3.2(a) AELIF Current Pulse")
 plt.plot(time, Isra*10**12)
@@ -57,4 +57,3 @@ plt.ylabel("Membrane Voltage (V)")
 plt.xlabel("time (s)")
 
 plt.show()
-plt.close()
