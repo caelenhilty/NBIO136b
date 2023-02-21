@@ -46,6 +46,8 @@ def PR(Isoma=0, Idendrite=0, Glink = 50e-9):
     mKAHP = np.ones(len(time)) * 0
     Ca = np.ones(len(time)) * 0 # concentration
 
+    spiketimes = []
+
     ### rate constants for gating variables ###
     def alphaM(Vs):
         return (320*10**3*(Vs+0.0469)) / (1-math.exp(-250*(Vs+0.0469)))
@@ -122,36 +124,39 @@ def PR(Isoma=0, Idendrite=0, Glink = 50e-9):
         if Vs[i] < -30e-3:
             canSpike = True
         if Vs[i] > -10e-3 and canSpike:
-            print("spiked", time[i])
+            spiketimes.append(i)
             canSpike = False
     
+    for i in spiketimes:
+        Vs[i] = 50e-3
+
     return time, Vs, Vd
 
 plt.figure(layout = 'constrained')
 
-time, Vs, Vd = PR(Isoma=50e-12)
+time, Vs, Vd = PR(Idendrite =50e-12)
 plt.subplot(311)
 plt.plot(time, Vs, 'b-', label = "Somatic Compartment")
 plt.plot(time, Vd, 'r-',label = 'Dendritic Compartment')
 plt.ylabel('Membrane Potential (V)')
 plt.xlabel('Time (s)')
-plt.title("Pinksy Rinzel, Soma $I_{app}$ = 50 pA")
+plt.title("Pinksy Rinzel, Dendrite $I_{app}$ = 50 pA")
 plt.legend(loc = 'upper left')
 
-time, Vs, Vd = PR(Isoma = 100e-12)
+time, Vs, Vd = PR(Idendrite = 100e-12)
 plt.subplot(312)
 plt.plot(time, Vs, 'b-', label = "Somatic Compartment")
 plt.plot(time, Vd, 'r-',label = 'Dendritic Compartment')
 plt.ylabel('Membrane Potential (V)')
 plt.xlabel('Time (s)')
-plt.title("Pinksy Rinzel, Soma $I_{app}$ = 100 pA")
+plt.title("Pinksy Rinzel, Dendrite $I_{app}$ = 100 pA")
 
-time, Vs, Vd = PR(Isoma = 200e-12)
+time, Vs, Vd = PR(Idendrite = 200e-12)
 plt.subplot(313)
 plt.plot(time, Vs, 'b-', label = "Somatic Compartment")
 plt.plot(time, Vd, 'r-',label = 'Dendritic Compartment')
 plt.ylabel('Membrane Potential (V)')
 plt.xlabel('Time (s)')
-plt.title("Pinksy Rinzel, Soma $I_{app}$ = 200 pA")
+plt.title("Pinksy Rinzel, Dendrite $I_{app}$ = 200 pA")
 
 plt.show()

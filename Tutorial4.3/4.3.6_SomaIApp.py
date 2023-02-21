@@ -46,6 +46,8 @@ def PR(Isoma=0, Idendrite=0, Glink = 50e-9):
     mKAHP = np.ones(len(time)) * 0
     Ca = np.ones(len(time)) * 0 # concentration
 
+    spiketimes = []
+
     ### rate constants for gating variables ###
     def alphaM(Vs):
         return (320*10**3*(Vs+0.0469)) / (1-math.exp(-250*(Vs+0.0469)))
@@ -122,9 +124,12 @@ def PR(Isoma=0, Idendrite=0, Glink = 50e-9):
         if Vs[i] < -30e-3:
             canSpike = True
         if Vs[i] > -10e-3 and canSpike:
-            print("spiked", time[i])
+            spiketimes.append(i)
             canSpike = False
     
+    for i in spiketimes:
+        Vs[i] = 50e-3
+
     return time, Vs, Vd
 
 plt.figure(layout = 'constrained')
