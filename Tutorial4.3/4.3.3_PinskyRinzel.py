@@ -84,7 +84,7 @@ def PR(Glink = 50e-9):
         return min([20, 20000*Ca[i]])
     betaMKAHP = 4
 
-    ### ODEs ###a
+    ### ODEs ###
     def VsDot(i):
         return (somaticLeakCond*(leakPot-Vs[i]) + maxNaCond*m[i]**2*h[i]*(NaPot-Vs[i]) + maxDelayedRectifierCond*n[i]**2*(KPot-Vs[i]) + linkCond*(Vd[i]-Vs[i]) + somaIapp)/somaCapacitance
     def mDot(i):
