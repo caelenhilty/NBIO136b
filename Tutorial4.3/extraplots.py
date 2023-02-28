@@ -31,7 +31,7 @@ def PR(Glink = 50e-9):
     kConvert = 5e6/dendriteArea #MC^-1
 
     ### vectors ###
-    dt = 0.2e-6 #s
+    dt = 0.2e-5 #s
     duration = 2 #s
     time = np.arange(0,duration+dt, dt)
 
@@ -44,7 +44,6 @@ def PR(Glink = 50e-9):
     mKCa =np.ones(len(time)) * 0
     mKAHP = np.ones(len(time)) * 0
     Ca = np.ones(len(time)) * 0 # concentration
-    spiketimes = []
 
     ### rate constants for gating variables ###
     def alphaM(Vs):
@@ -122,39 +121,28 @@ def PR(Glink = 50e-9):
         if Vs[i] < -30e-3:
             canSpike = True
         if Vs[i] > -10e-3 and canSpike:
-            spiketimes.append(i)
+            print("spiked", time[i])
             canSpike = False
-
-        for i in spiketimes:
-            Vs[i] = 50e-3
     
-    return time, Vs, Vd
+    return time, Vs, Vd, mCa, mKCa, mKAHP
 
 plt.figure(layout = 'constrained')
 
-time, Vs, Vd = PR(Glink = 0e-9)
-plt.subplot(311)
-plt.plot(time, Vs, 'b-', label = "Somatic Compartment")
-plt.plot(time, Vd, 'r-',label = 'Dendritic Compartment')
-plt.ylabel('Membrane Potential (V)')
-plt.xlabel('Time (s)')
-plt.title("Pinksy Rinzel, $G_{link}$ = 0 nS")
-plt.legend(loc = 'upper left')
-
-time, Vs, Vd = PR(Glink = 10e-9)
-plt.subplot(312)
-plt.plot(time, Vs, 'b-', label = "Somatic Compartment")
-plt.plot(time, Vd, 'r-',label = 'Dendritic Compartment')
-plt.ylabel('Membrane Potential (V)')
-plt.xlabel('Time (s)')
-plt.title("Pinksy Rinzel, $G_{link}$ = 10 nS")
-
-time, Vs, Vd = PR(Glink = 100e-9)
-plt.subplot(313)
-plt.plot(time, Vs, 'b-', label = "Somatic Compartment")
-plt.plot(time, Vd, 'r-',label = 'Dendritic Compartment')
-plt.ylabel('Membrane Potential (V)')
+plt.subplot(211)
+time, Vs, Vd, mCa, mKCa, mKAHP = PR(Glink = 100e-9)
+plt.plot(time, mKCa, label = "mKCa")
+plt.plot(time, mCa, label = 'mCa')
+plt.plot(time, mKAHP, label = 'mKAHP')
+plt.ylabel('Gating Variable')
 plt.xlabel('Time (s)')
 plt.title("Pinksy Rinzel, $G_{link}$ = 100 nS")
+plt.legend(loc = 'upper left')
+
+plt.subplot(212)
+plt.plot(time, Vs, label = "Somatic")
+plt.plot(time, Vd, label = "Dendritic")
+plt.ylabel('Membrane Potential (V)')
+plt.xlabel('Time (s)')
+plt.legend(loc = 'upper left')
 
 plt.show()
