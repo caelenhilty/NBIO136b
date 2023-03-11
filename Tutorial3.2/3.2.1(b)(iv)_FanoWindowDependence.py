@@ -56,10 +56,12 @@ def fanoFactor(time, spikes, window,dt):
 
 windows = np.linspace(0.01, 1, num = 1000)
 fanoFactors = np.zeros(len(windows))
-time, spikes, Iapps, V = AELIF(sigma = 50e-12, b = 0e-9)
+time, spikes, Iapps, V = AELIF(sigma = 50e-12, b = 1e-9)
 
 for i in range(len(windows)):
     fanoFactors[i] = fanoFactor(time, spikes, windows[i], dt = 0.01e-3)
+
+print(fanoFactor(time, spikes, 0.1, dt = 0.1e-3))
 
 plt.figure(layout = "constrained")
 plt.plot(windows, fanoFactors)

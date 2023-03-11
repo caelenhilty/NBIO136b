@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import math as m
 import numba as nb
 
-def AELIF(sigma = 50e-12, dt = 0.01e-3, duration = 100, b = 0):
+def AELIF(sigma = 50e-12, dt = 0.01e-3, duration = 100, b = 0, Iconstant = 0):
     ### ODEs ###
     ### voltage dot ###
     def Vdot(i):
@@ -31,7 +31,7 @@ def AELIF(sigma = 50e-12, dt = 0.01e-3, duration = 100, b = 0):
     V = np.ones(len(time)) * leakPot
     Isra = np.zeros(len(time))
 
-    Iapps = np.random.normal(0, sigma/m.sqrt(dt), len(time))
+    Iapps = np.random.normal(0, sigma/m.sqrt(dt), len(time)) + Iconstant
     spikes = []
 
     ### forward Euler ###
@@ -44,26 +44,35 @@ def AELIF(sigma = 50e-12, dt = 0.01e-3, duration = 100, b = 0):
             Isra[i] += b
             spikes.append(time[i])
 
-    return time, spikes, Iapps, V
+    ### calculate ISIs ###
+    if len(spikes) > 0:
+        ISIs = np.zeros(len(spikes))
+        prev = spikes[0]
+        index=0
+        for spike in spikes[1:]:
+            ISIs[index] = (spike - prev)
+            prev = spike
+            index+=1
 
-def fanoFactor(time, spikes, window,dt):
-    bins = np.zeros(int(len(time)*dt//window)+1)
-    for spike in spikes:
-        bins[int(spike//window)] += 1
-    variance = np.var(bins)
-    mean = np.average(bins)
-    return variance/mean
-
-windows = np.linspace(0.01, 1, num = 1000)
-fanoFactors = np.zeros(len(windows))
-time, spikes, Iapps, V = AELIF(sigma = 50e-12, b = 0e-9)
-
-for i in range(len(windows)):
-    fanoFactors[i] = fanoFactor(time, spikes, windows[i], dt = 0.01e-3)
+    return time, spikes, Iapps, V, ISIs
 
 plt.figure(layout = "constrained")
-plt.plot(windows, fanoFactors)
-plt.ylabel('Fano Factor')
-plt.xlabel("Window Size (s)")
-plt.title(f'Fano Factor vs Window Size, b = 0nA, ' + r"$\sigma = 50 pA\cdot s^{0.5}$")
+
+windows = np.linspace(0.01, 1, num = 1000)
+Iconstants = [0, 0.1e-9, 0.2e-9]
+a=1
+for I in Iconstants:
+    fanoFactors = np.zeros(len(windows))
+    time, spikes, Iapps, V, ISIs = AELIF(sigma = 20e-12, b = 0e-9, Iconstant=I)
+    
+    mu = np.average(ISIs)
+    sigma = np.std(ISIs)
+    CV = float(sigma/mu)
+
+    plt.subplot(3,1,a)
+    plt.hist(ISIs, bins = 25)
+    plt.title('ISI Distribution, b = 0nA, ' + r"$\sigma = 20 pA\cdot s^{0.5}$, " + r'$I_{constant}$ =  ' + f"{I} A, CV = {CV}")
+    plt.ylabel('Frequency')
+    plt.xlabel("ISI (s)")
+    a+=1
 plt.show()

@@ -42,28 +42,24 @@ def AELIF(sigma = 50e-12, dt = 0.01e-3, duration = 100, b = 0):
             V[i-1] = Vmax
             V[i] = Vreset
             Isra[i] += b
-            spikes.append(time[i])
+            spikes.append(i)
 
-    return time, spikes, Iapps, V
+    ### calculate ISIs ###
+    if len(spikes) > 0:
+        ISIs = np.zeros(len(spikes))
+        prev = spikes[0]
+        index=0
+        for spike in spikes:
+            ISIs[index] = (time[spike] - time[prev])
+            prev = spike
+            index+=1
 
-def fanoFactor(time, spikes, window,dt):
-    bins = np.zeros(int(len(time)*dt//window)+1)
-    for spike in spikes:
-        bins[int(spike//window)] += 1
-    variance = np.var(bins)
-    mean = np.average(bins)
-    return variance/mean
+    return time, spikes, ISIs, Iapps, V
 
-windows = np.linspace(0.01, 1, num = 1000)
-fanoFactors = np.zeros(len(windows))
-time, spikes, Iapps, V = AELIF(sigma = 50e-12, b = 0e-9)
-
-for i in range(len(windows)):
-    fanoFactors[i] = fanoFactor(time, spikes, windows[i], dt = 0.01e-3)
-
+time, spikes, ISIs, Iapps, V = AELIF(50e-12, 0.01e-3, 100, b=1e-9)
 plt.figure(layout = "constrained")
-plt.plot(windows, fanoFactors)
-plt.ylabel('Fano Factor')
-plt.xlabel("Window Size (s)")
-plt.title(f'Fano Factor vs Window Size, b = 0nA, ' + r"$\sigma = 50 pA\cdot s^{0.5}$")
+plt.hist(ISIs, bins = 25)
+plt.ylabel('frequency')
+plt.xlabel("ISI (s)")
+plt.title(r'ISI Distribution, $\sigma = 50 pA\cdot s^{0.5}$')
 plt.show()

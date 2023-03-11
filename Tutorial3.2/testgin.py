@@ -31,7 +31,7 @@ def AELIF(sigma = 50e-12, dt = 0.01e-3, duration = 100, b = 0):
     V = np.ones(len(time)) * leakPot
     Isra = np.zeros(len(time))
 
-    Iapps = np.random.normal(0, sigma/m.sqrt(dt), len(time))
+    Iapps = np.random.normal(0, sigma/m.sqrt(dt), len(time)) + 0.1e-9
     spikes = []
 
     ### forward Euler ###
@@ -42,24 +42,32 @@ def AELIF(sigma = 50e-12, dt = 0.01e-3, duration = 100, b = 0):
             V[i-1] = Vmax
             V[i] = Vreset
             Isra[i] += b
-            spikes.append(time[i])
+            spikes.append(i)
 
-    return time, spikes, Iapps, V
+    ### calculate ISIs ###
+    if len(spikes) > 0:
+        ISIs = np.zeros(len(spikes))
+        prev = spikes[0]
+        index=0
+        for spike in spikes:
+            ISIs[index] = (time[spike] - time[prev])
+            prev = spike
+            index+=1
 
-def fanoFactor(time, spikes, window,dt):
-    bins = np.zeros(int(len(time)*dt//window))
-    for spike in spikes:
-        bins[int(spike//window)] += 1
-    variance = np.var(bins)
-    mean = np.average(bins)
-    return variance, mean, variance/mean, bins
+    return time, spikes, ISIs, Iapps, V
 
-windows = np.linspace(0.010, 1, num = 1000)
-fanoFactors = np.zeros(len(windows))
+time, spikes, ISIs, Iapps, V = AELIF(20e-12, 0.01e-3, 100, b=0e-9)
+plt.figure(layout = "constrained")
+plt.subplot(311)
+plt.plot(time[:10000], Iapps[:10000])
 
-fano = 0
-for i in range(10):
-    time, spikes, Iapps, V = AELIF(sigma = 50e-12, b = 0e-9)
-    var, mean, fano, bins = fanoFactor(time, spikes, 0.8, 0.01e-3)
-    print(var, mean, fano)
-# print(bins)
+plt.subplot(312)
+plt.plot(time[:10000],V[:10000])
+
+plt.subplot(313)
+plt.hist(ISIs, bins = 25)
+
+plt.ylabel('frequency')
+plt.xlabel("ISI (s)")
+plt.title(r'ISI Distribution, $\sigma = 50 pA\cdot s^{0.5}$')
+plt.show()

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import math as m
 import numba as nb
 
-def AELIF(sigma = 50e-12, dt = 0.01e-3, duration = 100, b = 0, Iconstant = 0):
+def AELIF(sigma = 50e-12, dt = 0.01e-3, duration = 100, b=0):
     ### ODEs ###
     ### voltage dot ###
     def Vdot(i):
@@ -31,7 +31,7 @@ def AELIF(sigma = 50e-12, dt = 0.01e-3, duration = 100, b = 0, Iconstant = 0):
     V = np.ones(len(time)) * leakPot
     Isra = np.zeros(len(time))
 
-    Iapps = np.random.normal(0, sigma/m.sqrt(dt), len(time)) + Iconstant
+    Iapps = np.random.normal(0, sigma/m.sqrt(dt), len(time))
     spikes = []
 
     ### forward Euler ###
@@ -42,32 +42,27 @@ def AELIF(sigma = 50e-12, dt = 0.01e-3, duration = 100, b = 0, Iconstant = 0):
             V[i-1] = Vmax
             V[i] = Vreset
             Isra[i] += b
-            spikes.append(time[i])
+            spikes.append(i)
+    
+    ### calculate ISIs ###
+    if len(spikes) > 0:
+        ISIs = np.zeros(len(spikes))
+        prev = spikes[0]
+        index=0
+        for spike in spikes:
+            ISIs[index] = (time[spike] - time[prev])
+            prev = spike
+            index+=1
 
-    return time, spikes, Iapps, V
+    return time, spikes, ISIs, Iapps, V
 
-def fanoFactor(time, spikes, window,dt):
-    bins = np.zeros(int(len(time)*dt//window)+1)
-    for spike in spikes:
-        bins[int(spike//window)] += 1
-    variance = np.var(bins)
-    mean = np.average(bins)
-    return variance/mean
-
+time, spikes, ISIs, Iapps, V = AELIF(b=1e-9)
+mu = np.average(ISIs)
+sigma = np.std(ISIs)
+CV = float(sigma/mu)
 plt.figure(layout = "constrained")
-
-windows = np.linspace(0.01, 1, num = 1000)
-Iconstants = [0, 0.1e-9, 0.2e-9]
-a=1
-for I in Iconstants:
-    fanoFactors = np.zeros(len(windows))
-    time, spikes, Iapps, V = AELIF(sigma = 20e-12, b = 0e-9, Iconstant=I)
-    for i in range(len(windows)):
-        fanoFactors[i] = fanoFactor(time, spikes, windows[i], dt = 0.01e-3)
-    plt.subplot(3,1,a)
-    plt.plot(windows, fanoFactors)
-    plt.title('Fano Factor vs Window Size, b = 0nA, ' + r"$\sigma = 20 pA\cdot s^{0.5}$, " + r'$I_{constant}$ =  ' + f"{I} A")
-    plt.ylabel('Fano Factor')
-    plt.xlabel("Window Size (s)")
-    a+=1
+plt.hist(ISIs, bins = 25)
+plt.ylabel('frequency')
+plt.xlabel("ISI (s)")
+plt.title(f'ISI Distribution, CV = {CV:3.3f}')
 plt.show()
